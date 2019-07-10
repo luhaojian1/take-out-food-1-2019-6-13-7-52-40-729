@@ -45,3 +45,72 @@
   });
 
 */
+/*
+  it('should return a promotion Object when autoGetPromotion given items', function () {
+    //given
+    let inputs = [{itemId: 'ITEM0001', count: 1},
+      {itemId: 'ITEM0013', count: 2},
+      {itemId: 'ITEM0022', count: 1}];
+    //when
+    let item = takeOutFood.autoGetPromotion(inputs);
+    //then
+    expect(item).toEqual({
+      promotionFlag:2,
+      sumPrice:25,
+      receipt:`黄焖鸡 x 1 = 18元\n肉夹馍 x 2 = 12元\n凉皮 x 1 = 8元`,
+      promotionType:'指定菜品半价(黄焖鸡，凉皮)',
+      promotionPrice:13
+    });
+  });*/
+function autoGetPromotion(items) {
+  const promotions = loadPromotions();
+  const promotionItems = promotions[1].items;
+  let sumPrice = 0;
+  let promotionItemNames = [];
+  let halfPromotionPrice = 0;
+  let receipt = '';
+  items.forEach(itemInfo => {
+    const item = getItem(itemInfo.itemId);
+    receipt += `${item.name} x ${itemInfo.count} = ${item.price * itemInfo.count}元\n`;
+    for (let i = 0; i < promotionItems.length; i++) {
+      let itemPrice = item.price * itemInfo.count;
+      if (promotionItems[i] === item.id) {
+        sumPrice += itemPrice;
+        halfPromotionPrice += itemPrice/2;
+        promotionItemNames.push(item.name) ;
+
+      }
+      else {
+        sumPrice += itemPrice;
+        halfPromotionPrice += itemPrice;
+      }
+    }
+
+  });
+  if (sumPrice <30 && sumPrice === halfPromotionPrice){
+    return {
+      promotionFlag:0,
+      sumPrice:sumPrice,
+      receipt:receipt,
+    }
+  }
+  else if (sumPrice >= 30 && sumPrice <= halfPromotionPrice){
+    sumPrice -= 6;
+    return {
+      promotionFlag:1,
+      sumPrice:sumPrice,
+      receipt:receipt,
+      promotionType:'满30减6元',
+      promotionPrice:6
+    };
+  }
+  else if (sumPrice > halfPromotionPrice){
+    return {
+      promotionFlag:2,
+      sumPrice:sumPrice,
+      receipt:receipt,
+      promotionType:'指定菜品半价'+ (promotionItemNames.join(',')),
+      promotionPrice:(sumPrice - halfPromotionPrice)
+    }
+  }
+}
