@@ -54,5 +54,22 @@ describe('Take out food', function () {
     //then
     expect(item).toBe(true);
   });
-
+  //autoGetPromotion test
+  it('should return a promotion Object when autoGetPromotion given items', function () {
+    //given
+    let inputs = [{itemId: 'ITEM0001', count: 1},
+      {itemId: 'ITEM0013', count: 2},
+      {itemId: 'ITEM0022', count: 1}];
+    //when
+    let item = takeOutFood.autoGetPromotion(inputs);
+    console.log(item);
+    //then
+    expect(item).toEqual({
+      promotionFlag:2,
+      sumPrice:25,
+      receipt:`黄焖鸡 x 1 = 18元\n肉夹馍 x 2 = 12元\n凉皮 x 1 = 8元`,
+      promotionType:`指定菜品半价(黄焖鸡,凉皮)`,
+      promotionPrice:13
+    });
+  });
 });
