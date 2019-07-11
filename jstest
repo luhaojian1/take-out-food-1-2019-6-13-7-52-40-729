@@ -62,3 +62,18 @@
       promotionPrice:13
     });
   });*/
+const items = countItems(selectedItems);
+  const promotion = autoGetPromotion(items);
+  return createCharge(promotion);
+  function createCharge(promotion){
+    let report = `============= 订餐明细 =============\n`;
+    promotion.receipts.forEach(receipt =>{
+      report += `${receipt.name} x ${receipt.count} = ${receipt.price}\n`;
+    });
+    report += `-----------------------------------\n`;
+    if (promotion.promotionFlag === 1 || promotion.promotionFlag === 2 ){
+      report += `使用优惠：\n${promotion.promotionType}，省${promotion.promotionPrice}元\n-----------------------------------\n`;
+    }
+    report += `总计：${promotion.sumPrice}元\n===================================`;
+    return report.trim();
+  }
